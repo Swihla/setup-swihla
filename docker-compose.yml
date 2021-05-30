@@ -1,0 +1,51 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./api-rails-docker/tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+  web:
+    build: 
+      context: ./api-rails-docker
+      dockerfile: Dockerfile
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./api-rails-docker:/myapp
+      - railsgems:/usr/local/bundle
+    ports:
+      - "3040:3000"
+    depends_on:
+      - db
+  client:
+    build:
+      context: ./front-react
+      dockerfile: Dockerfile
+    image: front-react
+    container_name: front-react-client
+    command: npm start
+    volumes:
+      - ./front-react:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - web
+    ports:
+      - "3050:3000"
+  postgresql_pgadmin:
+    container_name: db-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    labels:
+      name: "db-pgadmin"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 8088:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    # tty: true
+volumes:
+  railsgems:
+  pgadmin-data:
