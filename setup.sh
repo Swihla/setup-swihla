@@ -1,6 +1,8 @@
-git clone 
+#!/bin/bash
 
-git clone 
+git clone git@github.com:Swihla/api-swihla.git
+
+git clone git@github.com:Swihla/front-swihla.git
 
 docker-compose build
 
