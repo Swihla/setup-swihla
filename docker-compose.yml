@@ -31,7 +31,6 @@ services:
     ports:
       - "3050:3000"
   postgresql_pgadmin:
-    container_name: db-pgadmin
     image: dpage/pgadmin4
     restart: always
     labels:
